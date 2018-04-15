@@ -50,7 +50,7 @@ function getWelcomeResponse(callback) {
     const sessionAttributes = {};
     const cardTitle = 'Welcome';
     const speechOutput = 'Welcome to the Light Switch controller. ' +
-        'Please ask me to control the light like, turn the light on';
+        'Please ask me to control the light by saying, turn the light on';
     // If the user either does not reply to the welcome message or says something that is not
     // understood, they will be prompted again with this text.
     const repromptText = 'Please tell me to turn on the light by saying, ' +
@@ -77,34 +77,6 @@ function createFavoriteColorAttributes(favoriteColor) {
 }
 
 /**
- * Sets the color in the session and prepares the speech to reply to the user.
- */
-
-function replyWithDog(intent, session, callback) {
-    const cardTitle = intent.name;
-    const petSizeSlot = intent.slots.size;
-    let repromptText = '';
-    let sessionAttributes = {};
-    const shouldEndSession = false;
-    let speechOutput = '';
-
-    if (petSizeSlot) {
-        const petSize = petSizeSlot.value;
-        
-        speechOutput = "Get a dog";
-        repromptText = "You can ask me to recommend you a doc by saying, recommend me a dog?";
-    } else {
-        speechOutput = "I'm not sure what your favorite color is. Please try again.";
-        repromptText = "I'm not sure what your favorite color is. You can tell me your " +
-            'favorite color by saying, my favorite color is red';
-    }
-
-    callback(sessionAttributes,
-         buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
-}
-
-
-/**
  * Sets the light on or off by sending an MQTT command to test.mosquitto.org
  */
 
@@ -117,6 +89,10 @@ function sendMqttCommand(commandToSend){
     });
 }
 
+var opposite = {}; // or var map = {};
+opposite['on'] = 'off';
+opposite['off'] = 'on';
+
 function controlLight(intent, session, callback) {
     const cardTitle = intent.name;
     const lightCommandSlot = intent.slots.Command;
@@ -125,13 +101,13 @@ function controlLight(intent, session, callback) {
     const shouldEndSession = false;
     let speechOutput = '';
 
-    if (lightCommandSlot) {
+    if (lightCommandSlot && lightCommandSlot.value in opposite) {
         const commandToSend = lightCommandSlot.value;
         
         sendMqttCommand(commandToSend);
 
-        speechOutput = `I've turned ${commandToSend} the light. You can ask me ` +
-            "to turn it back off by saying, turn the light off";
+        speechOutput = `I've turned ${commandToSend} the light. ` +
+        `You can ask me to turn it back ${opposite[commandToSend]} by saying, turn the light ${opposite[commandToSend]}`;
         repromptText = "You can ask me to turn on the light by saying, turn on the light";
     } else {
         speechOutput = "I'm not sure what the instruction was. Please try again.";
@@ -173,9 +149,7 @@ function onIntent(intentRequest, session, callback) {
     const intentName = intentRequest.intent.name;
 
     // Dispatch to your skill's intent handlers
-    if (intentName === 'PetMatchIntent') {
-        replyWithDog(intent, session, callback);
-    } else if (intentName === 'LightSwitchIntent') {
+    if (intentName === 'LightSwitchIntent') {
         controlLight(intent, session, callback);
     } else if (intentName === 'AMAZON.HelpIntent') {
         getWelcomeResponse(callback);

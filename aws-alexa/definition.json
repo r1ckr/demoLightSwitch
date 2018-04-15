@@ -1,0 +1,53 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "light switch",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "LightSwitchIntent",
+                    "slots": [
+                        {
+                            "name": "Command",
+                            "type": "Command"
+                        }
+                    ],
+                    "samples": [
+                        "switch the light {Command}",
+                        "please turn the light {Command}",
+                        "turn the light {Command}",
+                        "turn {Command} the light"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "Command",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "off"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "on"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
