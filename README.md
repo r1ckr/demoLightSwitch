@@ -1,13 +1,16 @@
 # Light Switch Demo
-
 This is a demo to control a light in a Raspberry Pi using Alexa, MQTT and Lambda functions in AWS
 
 Installation:
 ## Raspberry Pi
 
-Get a Raspberry Pi and connect to it a LED in the pin 18, then take the script [mqtt-listener](raspberry/mqtt-listener.py) script and run it:
+Get a Raspberry Pi and connect to it a LED in the pin 18, then clone this project from `/home/pi/`.
+After that copy the systemd service into the right folder:
 ```bash
-python mqtt-listener.py
+cd /home/pi
+sudo cp demoLightSwitch/raspberry/mqtt-listener.service
+sudo systemctl enable mqtt-listener.service
+sudo systemctl start mqtt-listener.service
 ```
 
 To test that it works you can send a message to the topic from another console:
@@ -18,6 +21,7 @@ mosquitto_pub -h test.mosquitto.org -p 1883 -t "/r1ckr/led" -m "on"
 # Turn it off
 mosquitto_pub -h test.mosquitto.org -p 1883 -t "/r1ckr/led" -m "off"
 ```
+That should turn on or off the LED
 
 ## Amazon Alexa
 Go to developer.amazon.com and create a new skill, then in the JSON editor paste the content of the [definition.json](aws-alexa/definition.json) file.
