@@ -1,0 +1,12 @@
+[Unit]
+Description=Start the mqtt client
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+PIDFile=/var/run/mqtt-listener/%i.pid
+ExecStartPre=/usr/bin/pip install -r /home/pi/demoLightSwitch/raspberry/requirements.txt
+ExecStart=/usr/bin/python /home/pi/demoLightSwitch/raspberry/mqtt-demo.py
+
+[Install]
+WantedBy=multi-user.target
